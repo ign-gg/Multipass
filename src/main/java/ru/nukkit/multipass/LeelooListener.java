@@ -24,13 +24,20 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerLoginEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
+import ru.nukkit.multipass.data.Providers;
 import ru.nukkit.multipass.permissions.Users;
 
 public class LeelooListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onLogin(PlayerLoginEvent event) {
-        Users.loadUser(event.getPlayer());
+        Users.loadUser(event.getPlayer()).whenComplete((user, ex) -> {
+            if (!user.inGroup(MultipassPlugin.getCfg().defaultGroup)) {
+                MultipassPlugin.getPlugin().getLogger().info("Adding missing default group for " + event.getPlayer().getName());
+                user.addGroup(MultipassPlugin.getCfg().defaultGroup);
+                Providers.saveUser(user);
+            }
+        });
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
