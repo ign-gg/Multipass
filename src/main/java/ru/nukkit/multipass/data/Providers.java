@@ -87,6 +87,10 @@ public enum Providers {
         return result;
     }
 
+    public static User loadUserSync(String playerName) {
+        return currentProvider.loadUser(playerName);
+    }
+
     public static CompletableFuture<Boolean> isRegistered(String userName) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         new MultiTask() {

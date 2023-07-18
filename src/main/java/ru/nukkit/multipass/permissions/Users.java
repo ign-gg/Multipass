@@ -57,6 +57,14 @@ public class Users {
         return result;
     }
 
+    public static User loadUserSync(String playerName) {
+        User loadedUser = Providers.loadUserSync(playerName);
+        User user = loadedUser == null ? new User(playerName) : loadedUser;
+        user.recalculatePermissions();
+        users.put(playerName, user);
+        return loadedUser;
+    }
+
     public static CompletableFuture<User> getUser(String playerName) {
         if (users.containsKey(playerName)) {
             CompletableFuture<User> result = new CompletableFuture<>();
